@@ -43,6 +43,7 @@ ASHA Sahayi is a Telegram bot designed to assist ASHA workers in rural and semi-
 Voice Input → STT → AI Extraction → Database → Guideline Retrieval → Advice Engine
 
 The system combines AI-based extraction with rule-based fallback and guideline-based retrieval for robust and safe operation.
+
 ---
 
 ## Tech Stack
