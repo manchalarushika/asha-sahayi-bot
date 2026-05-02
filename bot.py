@@ -5,6 +5,7 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 from ai_logic import speech_to_text, extract_patient_data, fallback_extraction
 from db import insert_patient, get_patient_history
 from ai_logic import get_medical_advice
+from ai_logic import get_rag_advice
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -43,9 +44,8 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Date: {data.get('date','')}"
     )
     # 🧠 Get medical advice
-    advice = get_medical_advice(data.get("blood_pressure"))
-
-    await update.message.reply_text(f"🩺 Advice:\n{advice}")
+    advice = get_rag_advice(data.get("blood_pressure"))
+    await update.message.reply_text(advice)
     # 🔍 Check previous record
     old_records = get_patient_history(data.get("name"))
 
