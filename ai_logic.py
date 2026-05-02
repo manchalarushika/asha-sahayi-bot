@@ -131,3 +131,27 @@ def get_medical_advice(bp):
 
     except:
         return "Unable to analyze BP"
+
+def get_rag_advice(bp):
+    if not bp:
+        return "No BP data available"
+
+    try:
+        systolic = int(bp.split("/")[0])
+
+        # load guideline document
+        with open("guidelines.txt", "r") as f:
+            doc = f.read()
+
+        # simple retrieval logic
+        if systolic < 120:
+            context = "BP is normal. Maintain healthy lifestyle."
+        elif 120 <= systolic < 140:
+            context = "BP is slightly elevated. Monitor regularly."
+        else:
+            context = "High blood pressure. Consult a doctor."
+
+        return f"🩺 Advice (from guidelines): {context}"
+
+    except:
+        return "Unable to analyze BP"    
