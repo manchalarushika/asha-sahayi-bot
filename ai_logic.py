@@ -1,7 +1,5 @@
 import speech_recognition as sr
 from pydub import AudioSegment
-
-# 🔹 Gemini setup
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
@@ -14,8 +12,7 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
 
-
-# ✅ STEP 1: Voice → Text
+#  Voice → Text
 def speech_to_text(file_path):
     sound = AudioSegment.from_ogg(file_path)
     sound.export("voice.wav", format="wav")
@@ -31,8 +28,7 @@ def speech_to_text(file_path):
     except:
         return "Sorry, could not understand audio"
 
-
-# ✅ STEP 2: AI-based extraction (schema guided)
+# AI-based extraction (schema guided)
 def extract_patient_data(text):
     prompt = f"""
     Extract patient details from the text and return ONLY valid JSON.
@@ -87,7 +83,7 @@ def extract_name(text):
 
     return ""
 
-# ✅ STEP 3: Fallback extraction (for robustness)
+# Fallback extraction (for robustness)
 def fallback_extraction(text):
     data = {
         "name": "",
@@ -123,11 +119,11 @@ def get_medical_advice(bp):
         systolic = int(bp.split("/")[0])
 
         if systolic >= 140:
-            return "⚠️ High BP. Please consult a doctor."
+            return " High BP. Please consult a doctor."
         elif 120 <= systolic < 140:
-            return "🟡 Slightly elevated BP. Monitor regularly."
+            return " Slightly elevated BP. Monitor regularly."
         else:
-            return "🟢 BP is normal. Maintain healthy lifestyle."
+            return " BP is normal. Maintain healthy lifestyle."
 
     except:
         return "Unable to analyze BP"
@@ -151,7 +147,7 @@ def get_rag_advice(bp):
         else:
             context = "High blood pressure. Consult a doctor."
 
-        return f"🩺 Advice (from guidelines): {context}"
+        return f" Advice (from guidelines): {context}"
 
     except:
         return "Unable to analyze BP"    
