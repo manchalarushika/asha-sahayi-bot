@@ -1,0 +1,15 @@
+Blood Pressure Guidelines (based on standard health protocols)
+
+If systolic BP is less than 120:
+BP is normal. Maintain healthy lifestyle.
+
+If systolic BP is between 120 and 139:
+BP is slightly elevated. Monitor regularly and follow healthy diet.
+
+If systolic BP is 140 or higher:
+High blood pressure. Patient should consult a doctor immediately.
+
+General advice:
+Reduce salt intake.
+Exercise regularly.
+Avoid stress.
