@@ -10,14 +10,13 @@ from ai_logic import get_rag_advice
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-
-# ✅ TEXT FUNCTION
+#  TEXT FUNCTION
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     await update.message.reply_text(f"You said: {text}")
 
 
-# ✅ VOICE FUNCTION
+#  VOICE FUNCTION
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     voice = await update.message.voice.get_file()
     
@@ -29,43 +28,42 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = speech_to_text(file_path)
     await update.message.reply_text(f"Text: {text}")
 
-    # 🔥 AI extraction
+    #  AI extraction
     data = extract_patient_data(text)
 
-    # 🔁 fallback if AI fails
+    #  fallback if AI fails
     if data.get("name") == "" and data.get("blood_pressure") == "":
         data = fallback_extraction(text)
 
-    # 📋 Output
+    #  Output
     await update.message.reply_text(
-        f"📋 Patient Data:\n"
+        f" Patient Data:\n"
         f"Name: {data.get('name','')}\n"
         f"BP: {data.get('blood_pressure','')}\n"
         f"Date: {data.get('date','')}"
     )
-    # 🧠 Get medical advice
+    #  Get medical advice
     advice = get_rag_advice(data.get("blood_pressure"))
     await update.message.reply_text(advice)
-    # 🔍 Check previous record
+    #  Check previous record
     old_records = get_patient_history(data.get("name"))
 
     if old_records:
-        msg = "📌 Previous Records:\n"
+        msg = " Previous Records:\n"
         for rec in old_records:
             msg += f"Name: {rec[0]}, BP: {rec[1]}, Date: {rec[2]}\n"
         await update.message.reply_text(msg)
 
-    # 💾 Save new data
+    #  Save new data
     insert_patient(
         data.get("name"),
         data.get("blood_pressure"),
         data.get("date")
     )
 
-    await update.message.reply_text("✅ Data saved successfully")
+    await update.message.reply_text(" Data saved successfully")
 
-
-# ✅ BOT SETUP
+# BOT SETUP
 app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(MessageHandler(filters.TEXT, handle_message))
