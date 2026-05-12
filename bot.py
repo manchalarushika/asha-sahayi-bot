@@ -4,7 +4,6 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 from ai_logic import speech_to_text, extract_patient_data, fallback_extraction
 from db import insert_patient, get_patient_history
-from ai_logic import get_medical_advice
 from ai_logic import get_rag_advice
 from telegram.ext import CommandHandler
 
