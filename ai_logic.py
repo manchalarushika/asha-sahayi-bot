@@ -10,7 +10,7 @@ from datetime import datetime
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+model = genai.GenerativeModel("gemini-pro")
 
 #  Voice → Text
 def speech_to_text(file_path):
@@ -129,25 +129,67 @@ def get_medical_advice(bp):
         return "Unable to analyze BP"
 
 def get_rag_advice(bp):
+
     if not bp:
         return "No BP data available"
+
+    retrieved_context = ""
 
     try:
         systolic = int(bp.split("/")[0])
 
-        # load guideline document
+        # Read full guidelines
         with open("guidelines.txt", "r") as f:
-            doc = f.read()
+            guidelines = f.read()
 
-        # simple retrieval logic
+        # Retrieve matching section
         if systolic < 120:
-            context = "BP is normal. Maintain healthy lifestyle."
-        elif 120 <= systolic < 140:
-            context = "BP is slightly elevated. Monitor regularly."
-        else:
-            context = "High blood pressure. Consult a doctor."
+            retrieved_context = """
+If systolic BP is less than 120:
+BP is normal. Maintain healthy lifestyle.
+"""
 
-        return f" Advice (from guidelines): {context}"
+        elif 120 <= systolic < 140:
+            retrieved_context = """
+If systolic BP is between 120 and 139:
+BP is slightly elevated. Monitor regularly and follow healthy diet.
+"""
+
+        else:
+            retrieved_context = """
+If systolic BP is 140 or higher:
+High blood pressure. Patient should consult a doctor immediately.
+"""
+
+        # Add general advice
+        retrieved_context += """
+General advice:
+Reduce salt intake.
+Exercise regularly.
+Avoid stress.
+"""
+
+        # Pass context to Gemini
+        prompt = f"""
+You are a healthcare assistant.
+
+Use ONLY the following healthcare guideline information.
+
+Healthcare Guidelines:
+{guidelines}
+
+Matched Guideline Section:
+{retrieved_context}
+
+Patient BP:
+{bp}
+
+Give short and simple medical advice.
+"""
+
+        response = model.generate_content(prompt)
+
+        return response.text.strip()
 
     except:
-        return "Unable to analyze BP"    
+        return f"Advice from guidelines:\n{retrieved_context}"
