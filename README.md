@@ -31,16 +31,22 @@ ASHA Sahayi is a Telegram bot designed to assist ASHA workers in rural and semi-
 ---
 
 ### 4. RAG (Retrieval-Augmented Generation)
-- Uses a guideline document (guidelines.txt) as a trusted knowledge source
-- Retrieves relevant medical advice based on BP values
-- Generates responses grounded in external data (simulating NHM protocol)
-- Avoids hallucinated AI responses by relying on retrieved context
+- Uses a guideline document (`guidelines.txt`) as a trusted medical knowledge source
+- Retrieves the relevant guideline section based on patient BP values
+- Passes retrieved guideline context to the advice generation pipeline
+- Produces guideline-grounded responses instead of relying only on hardcoded logic
+- Includes fallback guideline-based advice generation for robustness
+
+### 5. Ethical Consent Flow
+- Displays a first-use consent message
+- Requires `/consent` before processing or storing patient information
+- Reinforces responsible handling of sensitive healthcare data
 
 ---
 
 ## System Architecture
 
-Voice Input → STT → AI Extraction → Database → Guideline Retrieval → Advice Engine
+Voice Input → STT → AI Extraction → Consent Validation → Database → Guideline Retrieval → Advice Engine
 
 The system combines AI-based extraction with rule-based fallback and guideline-based retrieval for robust and safe operation.
 
@@ -82,7 +88,9 @@ The system combines AI-based extraction with rule-based fallback and guideline-b
 - No external sharing of sensitive data  
 
 ### Consent
-- Assumes ASHA workers have obtained necessary consent before logging patient data  
+- The bot includes an in-app consent mechanism before any patient data is processed or stored
+- Users must provide consent using the `/consent` command
+- A warm first-use message informs users about data handling and storage  
 
 ---
 
@@ -90,7 +98,7 @@ The system combines AI-based extraction with rule-based fallback and guideline-b
 
 - Full regional language support  
 - Cloud database integration (Supabase/Firebase)  
-- Advanced RAG using official health documents  
+- Advanced semantic RAG using official healthcare protocols and vector retrieval  
 
 ---
 
