@@ -6,18 +6,52 @@ from ai_logic import speech_to_text, extract_patient_data, fallback_extraction
 from db import insert_patient, get_patient_history
 from ai_logic import get_medical_advice
 from ai_logic import get_rag_advice
+from telegram.ext import CommandHandler
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN")
+user_consent = {}
+async def consent(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user_id = update.message.from_user.id
+
+    user_consent[user_id] = True
+
+    await update.message.reply_text(
+        " Thank you. Consent received.\n"
+        "Patient data will now be stored securely."
+    )
 
 #  TEXT FUNCTION
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user_id = update.message.from_user.id
+
+    if user_id not in user_consent:
+
+        await update.message.reply_text(
+            " Namaste 🙏\n"
+            "This bot stores patient details only with your consent.\n"
+            "Please type /consent before using the bot."
+        )
+        return
+
     text = update.message.text
     await update.message.reply_text(f"You said: {text}")
 
 
 #  VOICE FUNCTION
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.message.from_user.id
+
+    if user_id not in user_consent:
+
+        await update.message.reply_text(
+            " Namaste 🙏\n"
+            "This bot stores patient details only with your consent.\n"
+            "Please type /consent before using the bot."
+        )
+        return
     voice = await update.message.voice.get_file()
     
     file_path = "voice.ogg"
@@ -64,8 +98,10 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(" Data saved successfully")
 
 # BOT SETUP
+# BOT SETUP
 app = ApplicationBuilder().token(TOKEN).build()
 
+app.add_handler(CommandHandler("consent", consent))
 app.add_handler(MessageHandler(filters.TEXT, handle_message))
 app.add_handler(MessageHandler(filters.VOICE, handle_voice))
 
