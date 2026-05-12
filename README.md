@@ -15,7 +15,7 @@ ASHA Sahayi is a Telegram bot designed to assist ASHA workers in rural and semi-
 ---
 
 ### 2. Structured Data Extraction
-- Uses Gemini (schema-guided prompting) to extract:
+- Uses Gemini-based schema-guided prompting with rule-based fallback extraction to extract:
   - Patient Name
   - Blood Pressure
   - Date
